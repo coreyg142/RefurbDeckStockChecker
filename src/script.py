@@ -35,6 +35,13 @@ key = os.getenv("key")
 country_code = os.getenv("country_code")
 check_interval = os.getenv("check_interval", 60)
 
+def send_webhook_message(message):
+    webhook = DiscordWebhook(
+        url=webhook_url, 
+        content=message
+    )
+    webhook.execute()
+
 def check_availability():
     logger.info("Checking availability...")
     if not webhook_url or not key or not country_code:
@@ -55,6 +62,7 @@ def check_availability():
                     response.raise_for_status()  # Raise an error for bad responses
                 except requests.exceptions.RequestException as e:
                     logger.error(f"Error fetching data for package ID {package_id}: {e}")
+                    send_webhook_message(f"Error fetching data for package ID\n{e}")
                     return
                 response_json = response.json()
 
@@ -68,15 +76,12 @@ def check_availability():
                     webhookContent += f"{device['capacity']} {"OLED " if device['OLED'] else "LCD"} {"is available" if device['available'] else "is not available"}\n"
             if webhookContent != "":
                 logger.info(webhookContent)
-                webhook = DiscordWebhook(
-                    url=webhook_url, 
-                    content=webhookContent
-                )
-                webhook.execute()
+                send_webhook_message(webhookContent)
             else:
                 logger.info("No changes in availability status.")
     except Exception:
         logger.error(f"Error running script: {traceback.format_exc()}")
+        send_webhook_message(f"An error occurred while running the script.\n{traceback.format_exc()}")
 
 if __name__ == "__main__":
     check_availability()
