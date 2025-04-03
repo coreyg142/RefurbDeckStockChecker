@@ -1,0 +1,20 @@
+[
+  {
+    "capacity": "512GB",
+    "OLED": true,
+    "packageId": 1202542,
+    "available": false
+  },
+  {
+    "capacity": "1TB",
+    "OLED": true,
+    "packageId": 1202547,
+    "available": false
+  },
+  {
+    "capacity": "512GB",
+    "OLED": false,
+    "packageId": 903907,
+    "available": true
+  }
+]
