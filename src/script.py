@@ -3,14 +3,23 @@ from discord_webhook import DiscordWebhook
 import os
 import requests
 import json
+import signal
+import sys
 load_dotenv()
+
+def signal_handler(sig, frame):
+    print("Exiting...")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 base_url = "https://api.steampowered.com/IPhysicalGoodsService/CheckInventoryAvailableByPackage/v1"
 webhook_url = os.getenv("webhook_url")
 key = os.getenv("key")
 country_code = os.getenv("country_code")
 
-with open("src/devices.json", "r") as f:
+with open("config/devices.json", "r") as f:
     devices = json.load(f)
     webhookContent = ""
     for device in devices:
@@ -31,8 +40,11 @@ with open("src/devices.json", "r") as f:
                 json.dump(devices, f, indent=2)
             webhookContent += f"{device['capacity']} {"OLED " if device['OLED'] else "LCD"} {"is available" if device['available'] else "is not available"}\n"
     if webhookContent != "":
+        print(webhookContent)
         webhook = DiscordWebhook(
             url=webhook_url, 
             content=webhookContent
         )
         webhook.execute()
+    else:
+        print("No changes in availability status.")
