@@ -12,7 +12,7 @@ This project is a Python-based tool to monitor the availability of refurbished S
 
 - Python 3.7 or higher
 - A Discord webhook URL
-- Steam API key from `https://steamcommunity.com/dev/apikey`
+- Steam API key from https://steamcommunity.com/dev/apikey
 - `dotenv` and `discord_webhook` Python packages
 
 ## Installation
